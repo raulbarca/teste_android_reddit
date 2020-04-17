@@ -9,12 +9,23 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RedditService {
+    @GET("new/.json?")
+    fun getTop(
+        @Query("limit") limit: Int = 6
+    ): Deferred<Response<PostResponse>>
 
     @GET("new/.json?")
-    fun getPostList(@Query("after") after: String, @Query("limit") limit: Int = 6): Deferred<Response<PostResponse>>
+    fun getTopAfter(
+        @Query("after") after: String,
+        @Query("limit") limit: Int
+    ): Deferred<Response<PostResponse>>
+
+    @GET("new/.json?")
+    fun getTopBefore(
+        @Query("before") before: String,
+        @Query("limit") limit: Int
+    ): Deferred<Response<PostResponse>>
 
     @GET("comments/{id}.json")
     fun getCommentList(@Path("id") postId: String): Deferred<Response<List<CommentResponse>>>
-
-
 }

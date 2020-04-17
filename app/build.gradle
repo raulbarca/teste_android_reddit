@@ -145,4 +145,7 @@ dependencies {
     // Custom tabs
     implementation 'com.android.support:customtabs:28.0.0'
 
+    // Custom tabs
+    implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
+
 }
