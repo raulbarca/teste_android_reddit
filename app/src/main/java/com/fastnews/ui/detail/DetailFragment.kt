@@ -13,7 +13,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.fastnews.R
+import com.fastnews.extensions.decodeHtml
 import com.fastnews.mechanism.TimeElapsed
 import com.fastnews.mechanism.VerifyNetworkInfo
 import com.fastnews.service.model.CommentData
@@ -22,7 +24,6 @@ import com.fastnews.ui.web.CustomTabsWeb
 import com.fastnews.viewmodel.CommentViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_detail_post.*
-import kotlinx.android.synthetic.main.fragment_timeline.*
 import kotlinx.android.synthetic.main.include_detail_post_thumbnail.*
 import kotlinx.android.synthetic.main.include_detail_post_title.*
 import kotlinx.android.synthetic.main.include_item_timeline_ic_score.*
@@ -40,7 +41,11 @@ class DetailFragment : Fragment() {
         ViewModelProviders.of(this).get(CommentViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         this.arguments.let {
             post = it?.getParcelable(KEY_POST)
         }
@@ -49,7 +54,8 @@ class DetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,15 +100,16 @@ class DetailFragment : Fragment() {
     }
 
     private fun fetchComments() {
-            post.let {
-                commentViewModel.getComments(postId = post!!.id).observe(this, Observer<List<CommentData>> { comments ->
+        post.let {
+            commentViewModel.getComments(postId = post!!.id)
+                .observe(this, Observer<List<CommentData>> { comments ->
                     comments.let {
                         populateComments(comments)
                         hideStateProgress()
                         showComments()
                     }
                 })
-            }
+        }
     }
 
     private fun populateComments(comments: List<CommentData>) {
@@ -163,14 +170,9 @@ class DetailFragment : Fragment() {
         val PREFIX_HTTP = "http"
         var thumbnailUrl = ""
 
-        // TODO Fix high quality images
-        /*if(post?.preview != null) {
-            post?.preview?.images?.map {
-                if (!TextUtils.isEmpty(it.source.url)) {
-                    thumbnailUrl = it.source.url
-                }
-            }
-        }*/
+        val imageUrl = post?.preview?.images?.first()?.let {
+            it.source.url.decodeHtml()
+        }
 
         if (!TextUtils.isEmpty(post?.thumbnail) && post?.thumbnail!!.startsWith(PREFIX_HTTP)) {
             thumbnailUrl = post!!.thumbnail
@@ -178,8 +180,13 @@ class DetailFragment : Fragment() {
 
         if (!TextUtils.isEmpty(thumbnailUrl)) {
             Glide.with(item_detail_post_thumbnail.context)
-                .load(thumbnailUrl)
+                .load(imageUrl)
+                .thumbnail(
+                    Glide.with(item_detail_post_thumbnail.context)
+                        .load(thumbnailUrl)
+                )
                 .placeholder(R.drawable.ic_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(item_detail_post_thumbnail)
             item_detail_post_thumbnail.visibility = View.VISIBLE
         }
@@ -187,13 +194,17 @@ class DetailFragment : Fragment() {
 
     private fun buildOnClickDetailThumbnail() {
         item_detail_post_thumbnail.setOnClickListener {
-            if(!post?.url.isNullOrEmpty()) {
+            if (!post?.url.isNullOrEmpty()) {
                 context.let {
                     val customTabsWeb = CustomTabsWeb(context!!, post?.url!!)
                     customTabsWeb.openUrlWithCustomTabs()
                 }
             } else {
-                Snackbar.make(item_detail_post_thumbnail, R.string.error_detail_post_url, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(
+                    item_detail_post_thumbnail,
+                    R.string.error_detail_post_url,
+                    Snackbar.LENGTH_SHORT
+                ).show();
             }
         }
     }
