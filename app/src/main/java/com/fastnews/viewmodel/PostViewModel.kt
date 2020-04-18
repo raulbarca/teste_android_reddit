@@ -11,7 +11,7 @@ import com.fastnews.service.model.PostData
 class PostViewModel(
     repository: PostRepository
 ) : ViewModel() {
-    var posts: LiveData<PagedList<PostData>>
+    val posts: LiveData<PagedList<PostData>>
 
     init {
         val config = PagedList.Config.Builder()
