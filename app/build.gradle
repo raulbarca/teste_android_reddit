@@ -1,11 +1,9 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply from: '../jacoco.gradle'
 
 android {
-
     // Keys for buildConfigFields
     def API_ENDPOINT = "API_ENDPOINT"
     def API_ENDPOINT_REDDIT = '"https://www.reddit.com/r/Android/"'
@@ -102,6 +100,9 @@ dependencies {
 
     // Test
     testImplementation 'junit:junit:4.12'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'io.mockk:mockk:1.9.3'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
@@ -147,5 +148,4 @@ dependencies {
 
     // Paging
     implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
-
 }
