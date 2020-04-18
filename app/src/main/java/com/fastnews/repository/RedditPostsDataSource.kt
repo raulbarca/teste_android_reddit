@@ -6,6 +6,7 @@ import com.fastnews.mechanism.Retryable
 import com.fastnews.service.api.RedditService
 import com.fastnews.service.model.PostData
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RedditPostsDataSource(
@@ -38,6 +39,7 @@ class RedditPostsDataSource(
 
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
+                        delay(2000)
                         loadInitial(params, callback)
                     }
                 }
@@ -67,6 +69,7 @@ class RedditPostsDataSource(
                         }
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
+                        delay(2000)
                         loadBefore(params, callback)
                     }
                 }
@@ -93,6 +96,7 @@ class RedditPostsDataSource(
                         }
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
+                        delay(2000)
                         loadAfter(params, callback)
                     }
                 }
