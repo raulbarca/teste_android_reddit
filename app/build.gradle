@@ -148,4 +148,8 @@ dependencies {
 
     // Paging
     implementation 'androidx.paging:paging-runtime-ktx:2.1.2'
+
+    // Koin
+    implementation 'org.koin:koin-android:2.1.5'
+    implementation 'org.koin:koin-androidx-viewmodel:2.1.5'
 }

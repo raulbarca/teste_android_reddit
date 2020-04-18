@@ -1,15 +1,16 @@
 package com.fastnews.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.fastnews.repository.PostRepository
 import com.fastnews.service.model.PostData
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+class PostViewModel(
+    repository: PostRepository
+) : ViewModel() {
     var posts: LiveData<PagedList<PostData>>
 
     init {
@@ -18,7 +19,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             .setPageSize(PAGE_SIZE)
             .setEnablePlaceholders(false)
             .build()
-        val dataSourceFactory = PostRepository.getPostsDataSourceFactory(viewModelScope)
+        val dataSourceFactory = repository.getPostsDataSourceFactory(viewModelScope)
         posts = LivePagedListBuilder(dataSourceFactory, config).build()
     }
 

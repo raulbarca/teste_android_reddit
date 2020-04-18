@@ -8,7 +8,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -19,11 +18,10 @@ import com.fastnews.service.model.PostData
 import com.fastnews.ui.detail.DetailFragment.Companion.KEY_POST
 import com.fastnews.viewmodel.PostViewModel
 import kotlinx.android.synthetic.main.fragment_timeline.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TimelineFragment : Fragment() {
-    private val viewModel: PostViewModel by lazy {
-        ViewModelProviders.of(this).get(PostViewModel::class.java)
-    }
+    private val viewModel: PostViewModel by viewModel()
 
     private lateinit var adapter: TimelineAdapter
 
@@ -75,7 +73,7 @@ class TimelineFragment : Fragment() {
     }
 
     private fun fetchTimeline() {
-        viewModel.posts.observe(this, Observer { posts ->
+        viewModel.posts.observe(viewLifecycleOwner, Observer { posts ->
             posts.let {
                 adapter.submitList(posts)
                 hideProgress()
