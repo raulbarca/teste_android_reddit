@@ -22,21 +22,10 @@ class RedditPostsDataSource(
             override fun retry() {
                 scope.launch {
                     try {
-                        val response = service.getTop(
-                            limit = params.requestedLoadSize
-                        ).await()
-
-                        if (response.isSuccessful) {
-                            val postResponse = response.body()
-                            val result =
-                                postResponse?.data?.children?.map { it.data } ?: mutableListOf()
-                            callback.onResult(
-                                result,
-                                postResponse?.data?.before,
-                                postResponse?.data?.after
-                            )
-                        }
-
+                        val response = service.getTop(limit = params.requestedLoadSize).await()
+                        val data = response.body()?.data
+                        val result = data?.children?.map { it.data } ?: mutableListOf()
+                        callback.onResult(result, data?.before, data?.after)
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
                         delay(2000)
@@ -60,13 +49,9 @@ class RedditPostsDataSource(
                             before = params.key,
                             limit = params.requestedLoadSize
                         ).await()
-
-                        if (response.isSuccessful) {
-                            val postResponse = response.body()
-                            val result =
-                                postResponse?.data?.children?.map { it.data } ?: mutableListOf()
-                            callback.onResult(result, postResponse?.data?.after)
-                        }
+                        val data = response.body()?.data
+                        val result = data?.children?.map { it.data } ?: mutableListOf()
+                        callback.onResult(result, data?.before)
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
                         delay(2000)
@@ -87,13 +72,9 @@ class RedditPostsDataSource(
                             after = params.key,
                             limit = params.requestedLoadSize
                         ).await()
-
-                        if (response.isSuccessful) {
-                            val postResponse = response.body()
-                            val result =
-                                postResponse?.data?.children?.map { it.data } ?: mutableListOf()
-                            callback.onResult(result, postResponse?.data?.after)
-                        }
+                        val data = response.body()?.data
+                        val result = data?.children?.map { it.data } ?: mutableListOf()
+                        callback.onResult(result, data?.after)
                     } catch (t: Throwable) {
                         Log.e("RedditPostsDataSource", "Failed to fetch data!")
                         delay(2000)
