@@ -20,6 +20,8 @@ import com.fastnews.mechanism.TimeElapsed
 import com.fastnews.mechanism.VerifyNetworkInfo
 import com.fastnews.service.model.CommentData
 import com.fastnews.service.model.PostData
+import com.fastnews.ui.FragmentActivityUtils
+import com.fastnews.ui.FragmentActivityUtils.getSupportBar
 import com.fastnews.ui.web.CustomTabsWeb
 import com.fastnews.viewmodel.CommentViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -65,10 +67,8 @@ class DetailFragment : Fragment() {
     }
 
     private fun buildActionBar() {
-        val activity = activity as AppCompatActivity
-
-        //activity.setSupportActionBar(toolbar)
-        activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        val supportActionBar = getSupportBar(activity)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
     }
 

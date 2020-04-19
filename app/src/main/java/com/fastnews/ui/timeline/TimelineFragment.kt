@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fastnews.R
 import com.fastnews.mechanism.VerifyNetworkInfo
 import com.fastnews.service.model.PostData
+import com.fastnews.ui.FragmentActivityUtils.getSupportBar
 import com.fastnews.ui.detail.DetailFragment.Companion.KEY_POST
 import com.fastnews.viewmodel.PostViewModel
 import kotlinx.android.synthetic.main.fragment_timeline.*
@@ -56,11 +56,11 @@ class TimelineFragment : Fragment() {
     }
 
     private fun buildActionBar() {
-        (activity as AppCompatActivity).supportActionBar?.setHomeButtonEnabled(false) // disable the button
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false) // remove the left caret
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
-        (activity as AppCompatActivity).supportActionBar?.title =
-            resources.getString(R.string.app_name)
+        val supportActionBar = getSupportBar(activity)
+        supportActionBar?.setHomeButtonEnabled(false) // disable the button
+        supportActionBar?.setDisplayHomeAsUpEnabled(false) // remove the left caret
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+        supportActionBar?.title = resources.getString(R.string.app_name)
     }
 
     private fun buildTimeline() {

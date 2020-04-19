@@ -19,6 +19,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                       '**/Manifest*.*',
                       '**/*Test*.*',
                       'android/**/*.*',
+                      '**/RedditApp.kt',
+                      '**/di/*',
                       '**/data/models/*']
     def debugTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: excludes)
     def mainSrc = "${project.projectDir}/src/main/java"
