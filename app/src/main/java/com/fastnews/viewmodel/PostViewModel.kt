@@ -1,30 +1,29 @@
 package com.fastnews.viewmodel
 
-import android.app.Application
-import androidx.annotation.UiThread
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.fastnews.mechanism.Coroutines
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.fastnews.repository.PostRepository
 import com.fastnews.service.model.PostData
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+class PostViewModel(
+    repository: PostRepository
+) : ViewModel() {
+    val posts: LiveData<PagedList<PostData>>
 
-    private lateinit var posts: MutableLiveData<List<PostData>>
-
-    @UiThread
-    fun getPosts(after: String, limit: Int): LiveData<List<PostData>> {
-            if (!::posts.isInitialized) {
-                posts = MutableLiveData()
-
-                Coroutines.ioThenMain({
-                    PostRepository.getPosts(after, limit)
-                }) {
-                    posts.postValue(it)
-                }
-            }
-        return posts
+    init {
+        val config = PagedList.Config.Builder()
+            .setInitialLoadSizeHint(PAGE_SIZE)
+            .setPageSize(PAGE_SIZE)
+            .setEnablePlaceholders(false)
+            .build()
+        val dataSourceFactory = repository.getPostsDataSourceFactory(viewModelScope)
+        posts = LivePagedListBuilder(dataSourceFactory, config).build()
     }
 
+    companion object {
+        private const val PAGE_SIZE = 50
+    }
 }

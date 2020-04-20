@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.fastnews.extensions.decodeHtml
 import com.fastnews.mechanism.TimeElapsed
 import com.fastnews.service.model.PostData
 import kotlinx.android.synthetic.main.include_item_timeline_ic_comments.view.*
@@ -45,13 +47,22 @@ class TimelineItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     }
 
     private fun populateThumbnail(value: PostData?) {
-        value?.thumbnail.let {
+        value?.thumbnail.let { thumbnailUrl ->
 
             val PREFIX_HTTP = "http"
 
-            if (!TextUtils.isEmpty(it) && it!!.startsWith(PREFIX_HTTP)) {
+            val imageUrl = value?.preview?.images?.first()?.let {
+                it.source.url.decodeHtml()
+            }
+
+            if (!TextUtils.isEmpty(thumbnailUrl) && thumbnailUrl!!.startsWith(PREFIX_HTTP)) {
                 Glide.with(view.item_timeline_thumbnail.context)
-                    .load(it)
+                    .load(imageUrl)
+                    .thumbnail(
+                        Glide.with(view.item_timeline_thumbnail.context)
+                            .load(thumbnailUrl)
+                    )
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(ColorDrawable(Color.LTGRAY))
                     .error(ColorDrawable(Color.DKGRAY))
                     .into(view.item_timeline_thumbnail)
